@@ -6,6 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "test:db:start": "docker compose up test-db -d",
+    "test:db:rm": "docker compose rm test-db -f -s -v",
+    "prisma:test:deploy": "dotenv -e .env.test -- prisma migrate deploy",
+    "test:db:restart": "yarn test:db:rm && yarn test:db:start && sleep 1 && yarn prisma:test:deploy",
     "dev:db:start": "docker compose up dev-db -d",
     "dev:db:rm": "docker compose rm dev-db -f -s -v",
     "dev:db:restart": "yarn dev:db:rm && yarn dev:db:start",
@@ -20,7 +24,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "pretest:e2e": "yarn test:db:restart",
+    "test:e2e": "dotenv -e .env.test -- jest --watch --no-cache --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -34,6 +39,8 @@
     "argon2": "^0.31.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "dotenv-cli": "^7.3.0",
+    "pactum": "^3.5.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^5.2.0",
@@ -78,6 +85,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "modulenamemapper": {
+      "^src/(.*)$": "<rootdir>/$1"
+    }
   }
 }

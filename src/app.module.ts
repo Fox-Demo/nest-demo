@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    //todo
+    //todo ConfigModule 的配置
     ConfigModule.forRoot({
       isGlobal: true,
     }),
